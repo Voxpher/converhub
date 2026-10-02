@@ -191,9 +191,12 @@ the blog index lists 15+ articles, and unknown tools 404.
 
 ## Deployment
 
-See **[DEPLOY.md](./DEPLOY.md)** — the complete free-stack guide: Oracle Cloud Always Free VM
-+ Docker Compose + Cloudflare DNS + Caddy HTTPS, all $0/month. To make a fresh zip of the
-project on Windows, run `.\zip-final.ps1` from the parent folder of `converthub`.
+See **[DEPLOY.md](./DEPLOY.md)**. Default path (no credit card, $0/month): **Render**
+free Docker service for the backend (API + worker + Redis in one container —
+`docker/render.Dockerfile` + `render.yaml` Blueprint) + **Vercel** free for the
+Next.js frontend. Alternative for more power (needs a card): Oracle Always Free VM.
+To make a fresh zip of the project on Windows, run `.\zip-final.ps1` from the
+parent folder of `converthub`.
 
 ## Roadmap
 
@@ -214,5 +217,3 @@ project on Windows, run `.\zip-final.ps1` from the parent folder of `converthub`
 * **Renaming the site:** change `SITE_NAME` in `client/lib/site.ts`
   (and the `name` fields in the two `package.json` files).
 * License: MIT.
-#   c o n v e r h u b  
- 

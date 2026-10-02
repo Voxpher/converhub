@@ -1,0 +1,33 @@
+# Render Blueprint — ConvertHub free deployment (no credit card required).
+#
+# How to use:
+#   1. Push this repo to GitHub (private is fine).
+#   2. Go to https://render.com → New → Blueprint → connect the repo.
+#   3. Render builds docker/render.Dockerfile and deploys it on the free plan.
+#   4. After you deploy the frontend on Vercel, come back here (or use the
+#      Render dashboard → converthub-api → Environment) and set CLIENT_URL
+#      to your real Vercel URL, then redeploy.
+
+services:
+  - type: web
+    name: converthub-api
+    runtime: docker
+    dockerfilePath: ./docker/render.Dockerfile
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FILE_TTL_MINUTES
+        value: 60
+      - key: MAX_FILE_SIZE_MB
+        value: 100
+      # Free tier has 512 MB RAM — one conversion at a time is the safe setting.
+      - key: WORKER_CONCURRENCY
+        value: 1
+      - key: LOG_LEVEL
+        value: info
+      # REPLACE after your Vercel deploy, then redeploy this service.
+      # Must exactly match the frontend origin or browsers block API calls (CORS).
+      - key: CLIENT_URL
+        value: https://your-app.vercel.app

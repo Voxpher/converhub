@@ -1,0 +1,226 @@
+// Image tool definitions (Phase 3).
+import type { ToolDefinition } from '../toolRegistry';
+
+const JPG = 'image/jpeg';
+const PNG = 'image/png';
+const WEBP = 'image/webp';
+const HEIC = 'image/heic';
+const HEIF = 'image/heif';
+const SVG = 'image/svg+xml';
+
+const RASTER_MIMES = [JPG, PNG, WEBP];
+const RASTER_EXTS = ['.jpg', '.jpeg', '.png', '.webp'];
+
+const FORMAT_OPTIONS = [
+  { value: 'jpeg', label: 'JPEG' },
+  { value: 'png', label: 'PNG' },
+  { value: 'webp', label: 'WebP' },
+];
+
+export const IMAGE_TOOLS: ToolDefinition[] = [
+  {
+    id: 'image-convert',
+    name: 'Image Converter',
+    category: 'image',
+    tagline: 'Convert images between JPEG, PNG and WebP.',
+    inputMimes: [JPG, PNG, WEBP, HEIC, HEIF, SVG],
+    inputExts: ['.jpg', '.jpeg', '.png', '.webp', '.heic', '.heif', '.svg'],
+    requiresFile: true,
+    maxFiles: 1,
+    optionsSchema: [
+      {
+        name: 'format',
+        label: 'Output format',
+        type: 'select',
+        default: 'jpeg',
+        options: FORMAT_OPTIONS,
+      },
+      {
+        name: 'quality',
+        label: 'Quality',
+        type: 'number',
+        default: 85,
+        min: 1,
+        max: 100,
+        help: 'Higher quality looks better but makes a larger file.',
+      },
+    ],
+    enabled: true,
+    phase: 3,
+  },
+  {
+    id: 'image-compress',
+    name: 'Image Compressor',
+    category: 'image',
+    tagline: 'Shrink image file size without visible quality loss.',
+    inputMimes: RASTER_MIMES,
+    inputExts: RASTER_EXTS,
+    requiresFile: true,
+    maxFiles: 1,
+    optionsSchema: [
+      {
+        name: 'quality',
+        label: 'Quality',
+        type: 'number',
+        default: 75,
+        min: 1,
+        max: 100,
+        help: 'Lower = smaller file. 70-80 is the sweet spot for photos.',
+      },
+      {
+        name: 'format',
+        label: 'Output format',
+        type: 'select',
+        default: 'keep',
+        options: [
+          { value: 'keep', label: 'Keep original' },
+          ...FORMAT_OPTIONS,
+        ],
+      },
+    ],
+    enabled: true,
+    phase: 3,
+  },
+  {
+    id: 'image-resize',
+    name: 'Image Resizer',
+    category: 'image',
+    tagline: 'Change image dimensions in pixels.',
+    inputMimes: RASTER_MIMES,
+    inputExts: RASTER_EXTS,
+    requiresFile: true,
+    maxFiles: 1,
+    optionsSchema: [
+      {
+        name: 'width',
+        label: 'Width (px)',
+        type: 'number',
+        min: 0,
+        max: 8000,
+        help: 'Pixels. Leave empty to scale automatically from the height.',
+      },
+      {
+        name: 'height',
+        label: 'Height (px)',
+        type: 'number',
+        min: 0,
+        max: 8000,
+        help: 'Pixels. Leave empty to scale automatically from the width.',
+      },
+      {
+        name: 'fit',
+        label: 'Resize mode',
+        type: 'select',
+        default: 'inside',
+        options: [
+          { value: 'inside', label: 'Keep aspect ratio' },
+          { value: 'fill', label: 'Exact dimensions' },
+          { value: 'cover', label: 'Crop to fill' },
+        ],
+      },
+    ],
+    enabled: true,
+    phase: 3,
+  },
+  {
+    id: 'image-crop',
+    name: 'Image Cropper',
+    category: 'image',
+    tagline: 'Crop images to an aspect ratio or exact region.',
+    inputMimes: RASTER_MIMES,
+    inputExts: RASTER_EXTS,
+    requiresFile: true,
+    maxFiles: 1,
+    optionsSchema: [
+      {
+        name: 'aspect',
+        label: 'Aspect ratio',
+        type: 'select',
+        default: 'free',
+        options: [
+          { value: 'free', label: 'Free (manual)' },
+          { value: '1:1', label: '1:1 Square' },
+          { value: '16:9', label: '16:9 Widescreen' },
+          { value: '9:16', label: '9:16 Portrait' },
+          { value: '4:3', label: '4:3 Standard' },
+        ],
+        help: 'A preset crops a centered region automatically. Choose "Free (manual)" and enter X, Y, width and height below to pick the region yourself.',
+      },
+      {
+        name: 'x',
+        label: 'X (px)',
+        type: 'number',
+        default: 0,
+        min: 0,
+        max: 8000,
+        help: 'Distance from the left edge. Only used for a manual crop.',
+      },
+      {
+        name: 'y',
+        label: 'Y (px)',
+        type: 'number',
+        default: 0,
+        min: 0,
+        max: 8000,
+        help: 'Distance from the top edge. Only used for a manual crop.',
+      },
+      {
+        name: 'width',
+        label: 'Crop width (px)',
+        type: 'number',
+        min: 0,
+        max: 8000,
+        help: 'Required for a manual crop; ignored when an aspect preset is chosen.',
+      },
+      {
+        name: 'height',
+        label: 'Crop height (px)',
+        type: 'number',
+        min: 0,
+        max: 8000,
+        help: 'Required for a manual crop; ignored when an aspect preset is chosen.',
+      },
+    ],
+    enabled: true,
+    phase: 3,
+  },
+  {
+    id: 'remove-metadata',
+    name: 'Remove Image Metadata',
+    category: 'image',
+    tagline: 'Strip EXIF data, GPS location and camera info from photos.',
+    inputMimes: RASTER_MIMES,
+    inputExts: RASTER_EXTS,
+    requiresFile: true,
+    maxFiles: 1,
+    optionsSchema: [],
+    enabled: true,
+    phase: 3,
+  },
+  {
+    id: 'image-to-base64',
+    name: 'Image to Base64',
+    category: 'image',
+    tagline: 'Encode an image as a Base64 data URI for code and CSS.',
+    inputMimes: [JPG, PNG, WEBP, SVG],
+    inputExts: ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg'],
+    requiresFile: true,
+    maxFiles: 1,
+    optionsSchema: [],
+    enabled: true,
+    phase: 3,
+  },
+  {
+    id: 'image-to-pdf',
+    name: 'Image to PDF',
+    category: 'image',
+    tagline: 'Combine up to 20 images into a single PDF document.',
+    inputMimes: RASTER_MIMES,
+    inputExts: RASTER_EXTS,
+    requiresFile: true,
+    maxFiles: 20,
+    optionsSchema: [],
+    enabled: true,
+    phase: 3,
+  },
+];
